@@ -16,4 +16,5 @@
 Okhttp dependency: https://square.github.io/okhttp/
 View binding for fragment: https://developer.android.com/topic/libraries/view-binding
 Coroutine scope for view model: https://developer.android.com/kotlin/coroutines
+Pull To Refresh: https://www.geeksforgeeks.org/android-pull-to-refresh-with-recyclerview-in-kotlin/
 ## Is there any other information you’d like us to know?
