@@ -1,16 +1,11 @@
 package com.krystaknight.employeedirectory.viewmodel
 
-import com.krystaknight.employeedirectory.api.EmployeeListService
 import com.krystaknight.employeedirectory.model.Employee
 import com.krystaknight.employeedirectory.model.EmployeeList
 import com.krystaknight.employeedirectory.model.EmployeeType
-import io.mockk.coEvery
-import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -18,34 +13,16 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 internal class EmployeeListViewModelTest {
-    private val dispatcher = UnconfinedTestDispatcher()
-    private val employee1 = Employee("01234",
-        "Steven Johnson",
-        "5552586931",
-        "steven@gmail.com",
-        "Biography here",
-        "",
-        "",
-        "The Best Team",
-        EmployeeType.CONTRACTOR)
-    private val employee2 = Employee("7894",
-        "Miranda Jones",
-        "5554561234",
-        "jones@gmail.com",
-        "Another Biography here",
-        "",
-        "",
-        "The Worst Team",
-        EmployeeType.PART_TIME)
-    private val employee3 = Employee("56323163",
-        "Randy Smith",
-        "5554568956",
-        "rsmith@gmail.com",
-        "Some more interesting info",
-        "",
-        "",
-        "The Okay Team",
+    private val employee1 = Employee("0d8fcc12-4d0c-425c-8355-390b312b909c",
+        "Justine Mason",
+        "5553280123",
+        "jmason.demo@squareup.com",
+        "Engineer on the Point of Sale team.",
+        "https://s3.amazonaws.com/sq-mobile-interview/photos/16c00560-6dd3-4af4-97a6-d4754e7f2394/small.jpg",
+        "https://s3.amazonaws.com/sq-mobile-interview/photos/16c00560-6dd3-4af4-97a6-d4754e7f2394/large.jpg",
+        "Point of Sale",
         EmployeeType.FULL_TIME)
+
     private val validJsonString: String? = "{\n" +
             "\t\"employees\" : [\n" +
             "\t\t{\n" +
@@ -61,65 +38,26 @@ internal class EmployeeListViewModelTest {
             "\n" +
             "      \"team\" : \"Point of Sale\",\n" +
             "      \"employee_type\" : \"FULL_TIME\"\n" +
-            "    },\n" +
-            "\n" +
-            "    {\n" +
-            "      \"uuid\" : \"a98f8a2e-c975-4ba3-8b35-01f719e7de2d\",\n" +
-            "\n" +
-            "      \"full_name\" : \"Camille Rogers\",\n" +
-            "      \"phone_number\" : \"5558531970\",\n" +
-            "      \"email_address\" : \"crogers.demo@squareup.com\",\n" +
-            "      \"biography\" : \"Designer on the web marketing team.\",\n" +
-            "\n" +
-            "      \"photo_url_small\" : \"https://s3.amazonaws.com/sq-mobile-interview/photos/5095a907-abc9-4734-8d1e-0eeb2506bfa8/small.jpg\",\n" +
-            "      \"photo_url_large\" : \"https://s3.amazonaws.com/sq-mobile-interview/photos/5095a907-abc9-4734-8d1e-0eeb2506bfa8/large.jpg\",\n" +
-            "\n" +
-            "      \"team\" : \"Public Web & Marketing\",\n" +
-            "      \"employee_type\" : \"PART_TIME\"\n" +
             "    }]}"
 
-
+    private val scope = TestScope()
 
     @Before
     fun setup(){
-        Dispatchers.setMain(dispatcher)
-    }
-
-
-    @Test
-    fun getEmployeesWithValidDataTest(){
-        val model = EmployeeListViewModel()
-        val service = mockk<EmployeeListService>()
-        val employeeList = EmployeeList(listOf(employee1,employee2,employee3))
-
-        coEvery { service.fetchEmployees() } returns validJsonString
-
-        model.request()
-        assertEquals(model.getEmployeeData(), employeeList)
+        Dispatchers.setMain(StandardTestDispatcher(scope.testScheduler))
     }
 
     @Test
-    fun getEmployeesWithMalformedJsonTest(){
+    fun parseDataNull(){
         val model = EmployeeListViewModel()
-        val service = mockk<EmployeeListService>()
-        coEvery { service.fetchEmployees() } returns "{}"
-
-        model.request()
-        assertEquals(model.getEmployeeData().value, null)
+        assertEquals(EmployeeList(null), model.parseData(null))
     }
 
     @Test
-    fun getEmployeesWithEmptyJsonTest(){
+    fun parseDataValid(){
         val model = EmployeeListViewModel()
-        val service = mockk<EmployeeListService>()
-        val emptyJson: String? = "{\n" +
-                "\t\"employees\" : [   \n" +
-                "\t]\n" +
-                "}"
-        coEvery { service.fetchEmployees() } returns emptyJson
-        model.request()
-        assertEquals(model.getEmployeeData().value, null)
-
+        val employeelist = EmployeeList(listOf(employee1))
+        assertEquals(employeelist, model.parseData(validJsonString))
     }
 
     @After

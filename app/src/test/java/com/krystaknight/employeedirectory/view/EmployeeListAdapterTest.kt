@@ -7,10 +7,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class EmployeeListAdapterTest {
+    private val nullAdapter = EmployeeListAdapter(EmployeeList(null))
 
     @Test
     fun getItemCountNullOrEmpty() {
-        val employeeListAdapter = EmployeeListAdapter(null)
+        val employeeListAdapter = nullAdapter
         assertEquals(employeeListAdapter.itemCount, 0)
     }
     @Test
@@ -30,7 +31,7 @@ internal class EmployeeListAdapterTest {
 
     @Test
     fun updateEmployeeListTest() {
-        val employeeListAdapter = EmployeeListAdapter(null)
+        val employeeListAdapter = nullAdapter
         val newEmployeeList = EmployeeList(listOf(Employee("01234",
             "Steven Johnson",
             "5552586931",
@@ -46,5 +47,14 @@ internal class EmployeeListAdapterTest {
         employeeListAdapter.updateEmployeeList(newEmployeeList)
         assertEquals(employeeListAdapter.itemCount, 1)
 
+    }
+
+    @Test
+    fun formatPhoneNumberTest(){
+        assertEquals("(555) 866-4141",nullAdapter.formatPhoneNumber("5558664141"))
+    }
+    @Test
+    fun formatPhoneNumberNullTest(){
+        assertEquals("",nullAdapter.formatPhoneNumber(null))
     }
 }

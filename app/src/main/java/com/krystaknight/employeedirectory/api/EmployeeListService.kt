@@ -10,7 +10,7 @@ class EmployeeListService {
     private var client = OkHttpClient()
     private val url = "https://s3.amazonaws.com/sq-mobile-interview/employees.json"
 
-    fun fetchEmployees(): String? {
+    private fun request(): String? {
         var result: String? = null
         try {
             val url = URL(url)
@@ -23,4 +23,6 @@ class EmployeeListService {
         }
         return result
     }
+
+    fun fetchEmployees() = request()
 }

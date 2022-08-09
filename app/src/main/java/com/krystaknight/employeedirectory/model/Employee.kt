@@ -22,5 +22,5 @@ data class Employee (
     )
 
 data class EmployeeList(
-    val employees: List<Employee>
+    val employees: List<Employee>?
 )

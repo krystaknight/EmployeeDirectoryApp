@@ -1,6 +1,7 @@
 package com.krystaknight.employeedirectory.viewmodel
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,20 +29,22 @@ class EmployeeListViewModel: ViewModel() {
 
     fun request(){
         viewModelScope.launch {
-            val list = withContext(Dispatchers.IO){
+            val list =  withContext(Dispatchers.IO){
                 employeeListService.fetchEmployees()
             }
             employeeData.value = parseData(list)
         }
     }
 
-    private fun parseData(data: String?): EmployeeList?{
-        if(data == null) return null
+    @VisibleForTesting
+    fun parseData(data: String?): EmployeeList {
+        if(data == null) return EmployeeList(null)
         val mapper =  jacksonObjectMapper()
-        var  employeeList: EmployeeList? = null
+        var  employeeList: EmployeeList
         try {
-           employeeList = mapper.readValue<EmployeeList>(data)
+           employeeList = mapper.readValue(data)
         } catch (err: MissingKotlinParameterException){
+            employeeList = EmployeeList(null)
             Log.e(TAG, "Data malformed: ${err.message.toString()}")
         }
         return employeeList

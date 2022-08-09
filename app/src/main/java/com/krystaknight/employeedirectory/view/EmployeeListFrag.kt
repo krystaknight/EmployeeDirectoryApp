@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.krystaknight.employeedirectory.databinding.FragmentEmployeeListBinding
+import com.krystaknight.employeedirectory.model.EmployeeList
 import com.krystaknight.employeedirectory.viewmodel.EmployeeListViewModel
 
 
@@ -36,7 +37,7 @@ class EmployeeListFrag : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         employeeRecyclerView = binding.employeeRecyclerView
         employeeRecyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = EmployeeListAdapter(null)
+        adapter = EmployeeListAdapter(EmployeeList(null))
         employeeRecyclerView.adapter = adapter
         initLoadingSpinner = binding.initLoadingSpinner
         initLoadingSpinner.visibility = View.VISIBLE
@@ -53,7 +54,7 @@ class EmployeeListFrag : Fragment() {
             initLoadingSpinner.visibility = View.GONE
             adapter.updateEmployeeList(employeeList)
             adapter.notifyDataSetChanged()
-            if (employeeList == null) {
+            if (employeeList.employees == null) {
                 binding.errorView.visibility = View.VISIBLE
             } else if(employeeList.employees.isEmpty()){
                 binding.emptyView.visibility = View.VISIBLE
